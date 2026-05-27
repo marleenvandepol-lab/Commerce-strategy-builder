@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commerce Strategy Builder — Landal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--green:#1a3d2b;--green-mid:#2d6147;--green-light:#4a8c68;--green-pale:#e8f2ec;--green-muted:#c2dace;--sand:#f5f0e8;--sand-dark:#e8e0d0;--text:#1a1a18;--text-mid:#4a4a46;--text-muted:#8a8a82;--white:#ffffff;--border:rgba(26,61,43,0.12);--border-mid:rgba(26,61,43,0.22);--radius:12px;--radius-sm:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);min-height:100vh;font-weight:400;line-height:1.6}
+.page-header{background:var(--green);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'DM Serif Display',serif;color:var(--white);font-size:18px;letter-spacing:0.02em}
+.logo span{color:var(--green-muted);font-style:italic}
+.header-tag{font-size:11px;font-weight:500;color:var(--green-muted);text-transform:uppercase;letter-spacing:0.1em}
+.container{max-width:720px;margin:0 auto;padding:2.5rem 1.5rem}
+.screen{display:none}.screen.active{display:block}
+.welcome-title{font-family:'DM Serif Display',serif;font-size:36px;color:var(--green);line-height:1.2;margin-bottom:1rem}
+.welcome-title em{font-style:italic;color:var(--green-light)}
+.welcome-intro{font-size:16px;color:var(--text-mid);line-height:1.7;margin-bottom:2rem;max-width:560px}
+.welcome-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-bottom:1.5rem}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+.field-group label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px}
+.field-group input{width:100%;padding:10px 14px;font-size:15px;font-family:'DM Sans',sans-serif;border:1px solid var(--border-mid);border-radius:var(--radius-sm);background:var(--sand);color:var(--text);transition:border-color 0.15s}
+.field-group input:focus{outline:none;border-color:var(--green-light);background:var(--white)}
+.btn-start{background:var(--green);color:var(--white);border:none;padding:14px 36px;border-radius:var(--radius-sm);font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:background 0.15s;letter-spacing:0.02em}
+.btn-start:hover{background:var(--green-mid)}
+.progress-wrap{margin-bottom:2.5rem}
+.progress-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.progress-label{font-size:12px;color:var(--text-muted);font-weight:500;letter-spacing:0.04em;text-transform:uppercase}
+.progress-pct{font-size:12px;color:var(--green-light);font-weight:500}
+.progress-track{height:3px;background:var(--green-muted);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:2px;transition:width 0.4s ease}
+.q-category{font-size:11px;font-weight:500;color:var(--green-light);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem}
+.q-text{font-family:'DM Serif Display',serif;font-size:24px;color:var(--green);line-height:1.3;margin-bottom:0.5rem}
+.q-sub{font-size:14px;color:var(--text-muted);margin-bottom:1.75rem;line-height:1.6;font-style:italic}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:2rem}
+.opt-btn{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;text-align:left;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:flex-start;gap:14px;transition:all 0.15s}
+.opt-btn:hover{border-color:var(--green-light);background:var(--green-pale)}
+.opt-btn.selected{border:1.5px solid var(--green);background:var(--green-pale)}
+.opt-btn.selected .opt-check{opacity:1}
+.opt-letter{font-size:11px;font-weight:500;color:var(--text-muted);min-width:18px;margin-top:3px;text-transform:uppercase}
+.opt-btn.selected .opt-letter{color:var(--green)}
+.opt-content{flex:1}
+.opt-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;line-height:1.4}
+.opt-desc{font-size:13px;color:var(--text-muted);line-height:1.45}
+.opt-check{opacity:0;font-size:16px;color:var(--green);margin-top:1px}
+.rank-hint{font-size:13px;color:var(--text-muted);margin-bottom:1rem;font-style:italic}
+.rank-list{margin-bottom:2rem}
+.rank-item{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:grab;font-size:14px;color:var(--text);user-select:none;transition:border-color 0.12s,background 0.12s}
+.rank-item:hover{border-color:var(--green-muted)}
+.rank-item.dragging{opacity:0.45}
+.rank-item.drag-over{border-color:var(--green);background:var(--green-pale)}
+.rank-num{font-size:11px;font-weight:500;color:var(--green-light);min-width:18px}
+.drag-icon{color:var(--green-muted);font-size:15px}
+.nav-row{display:flex;justify-content:space-between;align-items:center}
+.btn-skip{font-size:13px;color:var(--text-muted);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:8px 0}
+.btn-skip:hover{color:var(--text-mid)}
+.btn-next{background:var(--green);color:var(--white);border:none;padding:11px 28px;border-radius:var(--radius-sm);font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:background 0.15s}
+.btn-next:hover{background:var(--green-mid)}
+.loading-wrap{text-align:center;padding:4rem 0}
+.loading-logo{font-family:'DM Serif Display',serif;font-size:28px;color:var(--green);margin-bottom:2rem;font-style:italic}
+.spinner{width:36px;height:36px;border:2px solid var(--green-muted);border-top-color:var(--green);border-radius:50%;animation:spin 0.9s linear infinite;margin:0 auto 1.5rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-msg{font-size:14px;color:var(--text-muted)}
+.result-meta{margin-bottom:2.5rem}
+.result-person{font-size:13px;color:var(--text-muted);margin-bottom:6px;font-weight:500;letter-spacing:0.03em}
+.result-title{font-family:'DM Serif Display',serif;font-size:32px;color:var(--green);margin-bottom:4px}
+.result-date{font-size:13px;color:var(--text-muted)}
+.north-star-block{background:var(--green);border-radius:var(--radius);padding:2rem;margin-bottom:2rem;color:var(--white)}
+.ns-eyebrow{font-size:11px;font-weight:500;color:var(--green-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.75rem}
+.ns-statement{font-family:'DM Serif Display',serif;font-size:22px;color:var(--white);line-height:1.35;margin-bottom:1rem}
+.ns-rationale{font-size:14px;color:var(--green-muted);line-height:1.7}
+.section-heading{font-size:11px;font-weight:500;color:var(--green-light);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+.strategy-section{margin-bottom:2rem}
+.pillar-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:12px}
+.pillar-number{font-size:11px;font-weight:500;color:var(--green-light);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px}
+.pillar-title{font-family:'DM Serif Display',serif;font-size:18px;color:var(--green);margin-bottom:6px}
+.pillar-desc{font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:1.25rem}
+.pillar-sub-label{font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;margin-top:12px}
+.pillar-goals,.pillar-actions{list-style:none;padding:0;margin-bottom:4px}
+.pillar-goals li{font-size:13px;color:var(--text-mid);padding:4px 0 4px 16px;position:relative;line-height:1.45}
+.pillar-goals li::before{content:"◆";position:absolute;left:0;color:var(--green-light);font-size:7px;top:7px}
+.pillar-actions li{font-size:13px;color:var(--text-mid);padding:4px 0 4px 16px;position:relative;line-height:1.45}
+.pillar-actions li::before{content:"→";position:absolute;left:0;color:var(--green-muted);font-size:12px;top:3px}
+.pillar-divider{height:1px;background:var(--border);margin:12px 0 8px}
+.kpi-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.kpi-chip{font-size:11px;background:var(--green-pale);color:var(--green-mid);padding:4px 10px;border-radius:20px;font-weight:500}
+.action-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:10px}
+.action-card-title{font-size:13px;font-weight:500;color:var(--green);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.06em}
+.action-list{list-style:none;padding:0}
+.action-list li{font-size:13px;color:var(--text-mid);padding:4px 0 4px 16px;position:relative;line-height:1.45}
+.action-list li::before{content:"→";position:absolute;left:0;color:var(--green-muted)}
+.answers-section{margin-bottom:2rem}
+.answers-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.answer-chip{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px}
+.answer-chip-cat{font-size:10px;font-weight:500;color:var(--green-light);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px}
+.answer-chip-q{font-size:11px;color:var(--text-muted);margin-bottom:4px;line-height:1.3}
+.answer-chip-a{font-size:12px;font-weight:500;color:var(--text);line-height:1.35}
+.additions-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:2rem}
+.additions-label{font-size:14px;color:var(--text-mid);margin-bottom:0.75rem;line-height:1.6}
+textarea.additions-input{width:100%;min-height:80px;padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;border:1px solid var(--border-mid);border-radius:var(--radius-sm);background:var(--sand);color:var(--text);resize:vertical;line-height:1.5}
+textarea.additions-input:focus{outline:none;border-color:var(--green-light);background:var(--white)}
+.result-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem}
+.btn-action{padding:11px 22px;border-radius:var(--radius-sm);font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:all 0.15s;border:1px solid var(--border-mid);background:var(--white);color:var(--green)}
+.btn-action:hover{background:var(--green-pale);border-color:var(--green-light)}
+.btn-action.primary{background:var(--green);color:var(--white);border-color:var(--green)}
+.btn-action.primary:hover{background:var(--green-mid)}
+.additions-note{font-size:12px;color:var(--green-light);margin-top:8px;font-style:italic;display:none}
+.additions-note.visible{display:block}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center}
+.modal-backdrop.open{display:flex}
+.modal{background:var(--sand);border-radius:var(--radius);padding:2rem;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;position:relative}
+.modal-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--green);margin-bottom:0.5rem}
+.modal-sub{font-size:14px;color:var(--text-muted);margin-bottom:1.5rem;line-height:1.5}
+.modal-close{position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted)}
+.modal-close:hover{color:var(--text)}
+.compare-table{width:100%;border-collapse:collapse;font-size:13px}
+.compare-table th{text-align:left;padding:8px 10px;font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border)}
+.compare-table td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.4}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table td:first-child{color:var(--text-muted);font-size:11px;max-width:120px}
+.compare-table td.diff{background:rgba(74,140,104,0.08)}
+.badge-match{display:inline-block;font-size:10px;font-weight:500;color:var(--green-mid);background:var(--green-pale);padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle}
+.badge-diff{display:inline-block;font-size:10px;font-weight:500;color:#8a4a1a;background:#f2e8d8;padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle}
+.compare-import-area{margin-bottom:1.5rem}
+.compare-import-area textarea{width:100%;min-height:80px;padding:10px 14px;font-size:13px;font-family:'DM Sans',sans-serif;border:1px solid var(--border-mid);border-radius:var(--radius-sm);background:var(--white);color:var(--text);resize:vertical}
+.compare-import-area textarea:focus{outline:none;border-color:var(--green-light)}
+@media print{
+  .page-header{background:#1a3d2b!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .north-star-block{background:#1a3d2b!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .result-actions,.additions-card,.progress-wrap,.nav-row,.answers-section,.modal-backdrop{display:none!important}
+  .pillar-card,.action-card,.north-star-block{break-inside:avoid;page-break-inside:avoid}
+  body{background:white}.container{padding:1rem}
+}
+@media(max-width:600px){
+  .field-row{grid-template-columns:1fr}.welcome-title{font-size:28px}.q-text{font-size:20px}.result-title{font-size:26px}.answers-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page-header">
+  <div class="logo">Landal <span>commerce</span></div>
+  <div class="header-tag">Strategy builder</div>
+</div>
+<div class="container">
+
+  <div id="screen-welcome" class="screen active">
+    <h1 class="welcome-title">What does <em>success</em> look like for you?</h1>
+    <p class="welcome-intro">Answer 12 questions about your priorities, beliefs and ambitions. You'll receive a tailored north star, demand and yield strategy — with goals, actions, KPIs and a draft roadmap — shaped by what matters most to you.</p>
+    <div class="welcome-card">
+      <div class="field-row">
+        <div class="field-group"><label>Your name</label><input type="text" id="user-name" placeholder="e.g. Marleen de Vries"/></div>
+        <div class="field-group"><label>Your role</label><input type="text" id="user-role" placeholder="e.g. Director Revenue Management"/></div>
+      </div>
+      <button class="btn-start" onclick="startQuestionnaire()">Start questionnaire →</button>
+    </div>
+  </div>
+
+  <div id="screen-questions" class="screen">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span class="progress-label" id="q-label">Question 1 of 12</span>
+        <span class="progress-pct" id="q-pct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div class="q-category" id="q-category"></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="q-sub" id="q-sub"></div>
+    <div id="q-body"></div>
+    <div class="nav-row">
+      <button class="btn-skip" onclick="skipQuestion()">Skip this question</button>
+      <button class="btn-next" onclick="nextQuestion()">Next →</button>
+    </div>
+  </div>
+
+  <div id="screen-loading" class="screen">
+    <div class="loading-wrap">
+      <div class="loading-logo">building your strategy...</div>
+      <div class="spinner"></div>
+      <div class="loading-msg" id="loading-msg">Analysing your priorities</div>
+    </div>
+  </div>
+
+  <div id="screen-result" class="screen">
+    <div class="result-meta">
+      <div class="result-person" id="result-person"></div>
+      <div class="result-title">Commerce strategy</div>
+      <div class="result-date" id="result-date"></div>
+    </div>
+    <div id="result-body"></div>
+    <div class="answers-section">
+      <div class="section-heading">Your answers</div>
+      <div class="answers-grid" id="answers-grid"></div>
+    </div>
+    <div class="additions-card">
+      <div class="section-heading">Anything missing?</div>
+      <p class="additions-label">Add any context, constraints or priorities not captured in the questionnaire. Click "Refresh &amp; print" to incorporate them into the output above before saving.</p>
+      <textarea class="additions-input" id="user-additions" placeholder="e.g. We have a major PMS migration planned for 2027. Our franchise segment is growing faster than company-owned parks..."></textarea>
+      <div class="additions-note" id="additions-note">Strategy refreshed — your additions are included in the printed output.</div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-action primary" onclick="refreshAndPrint()">Refresh &amp; print / save PDF</button>
+      <button class="btn-action" onclick="exportAnswers()">Export my answers</button>
+      <button class="btn-action" onclick="openCompare()">Compare with colleague</button>
+      <button class="btn-action" onclick="restartTool()">Start over</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-backdrop" id="compare-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeCompare()">✕</button>
+    <div class="modal-title">Compare strategies</div>
+    <div class="modal-sub">Paste a colleague's exported answer string below to see where you aligned and where you differed.</div>
+    <div class="compare-import-area">
+      <textarea id="compare-input" placeholder="Paste exported answers here..."></textarea>
+    </div>
+    <button class="btn-action primary" onclick="runCompare()" style="margin-bottom:1.5rem">Compare →</button>
+    <div id="compare-result"></div>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {id:"north_star_anchor",category:"Strategic direction",
+   text:"When you think about what Landal should be known for commercially, what matters most to you?",
+   sub:"There is no right answer — this reflects your personal conviction about where competitive advantage lies.",
+   type:"single",options:[
+    {title:"Knowing our guests better than anyone else",desc:"The deepest insight into who our guests are and what they need is our most defensible advantage."},
+    {title:"Matching every guest to the experience that fits them",desc:"Our edge is relevance — connecting the right guest to the right park and accommodation, every time."},
+    {title:"Delivering returns that owners cannot get elsewhere",desc:"Superior owner economics is what distinguishes Landal from all alternatives in the market."},
+    {title:"Pricing with more precision than any competitor",desc:"Consistently better pricing decisions — faster, smarter, more demand-responsive — is our real differentiator."}
+  ]},
+  {id:"biggest_demand_gap",category:"Demand performance",
+   text:"Where do you feel the biggest gap is in how we currently generate and capture demand?",
+   sub:"Think about where you are most often frustrated or where you see the most untapped potential.",
+   type:"single",options:[
+    {title:"We don't reach the right guest segments early enough",desc:"Too many potential guests don't know Landal exists or don't consider us for their type of break."},
+    {title:"We lose too many guests who do reach us",desc:"Conversion is the problem — too many guests arrive but don't book, or book less than they could."},
+    {title:"We're not good enough at bringing guests back",desc:"Repeat rate and loyalty are the weakness — first-time guests don't become loyal ones reliably enough."},
+    {title:"We don't know our guests well enough to act on it",desc:"We have guests but insufficient insight to personalise, anticipate or differentiate our offer."}
+  ]},
+  {id:"yield_biggest_gap",category:"Yield performance",
+   text:"Where is the most value being left on the table in how we price and manage revenue today?",
+   sub:"Pick the area that frustrates you most or where you see the biggest commercial opportunity being missed.",
+   type:"single",options:[
+    {title:"Our prices are not responsive enough to demand signals",desc:"We're too slow or too static — demand moves and our prices don't follow quickly enough."},
+    {title:"We spend too much time on manual pricing tasks",desc:"Human capacity is absorbed by routine decisions that should be automated."},
+    {title:"We can't forecast demand reliably enough to optimise",desc:"Uncertainty in demand makes it hard to hold rate confidently or plan inventory."},
+    {title:"We don't price consistently across similar experiences",desc:"Comparable parks or accommodations are priced inconsistently, confusing guests and undermining trust."}
+  ]},
+  {id:"guest_relationship_why",category:"Guest strategy",
+   text:"Why is a strong, direct guest relationship strategically important to Landal?",
+   sub:"This shapes what we invest in and how we measure the guest relationship's commercial contribution.",
+   type:"single",options:[
+    {title:"It gives us data and insight that drives better commercial decisions",desc:"Knowing who our guests are and how they behave makes pricing, forecasting and personalisation more accurate."},
+    {title:"It reduces dependency on intermediaries and lowers cost of acquisition",desc:"A loyal, direct guest base is structurally cheaper to serve and less vulnerable to channel disruption."},
+    {title:"It creates a guest base that owners and franchise partners cannot build themselves",desc:"The accumulated guest relationship is Landal's most distinctive asset — what we offer owners that no alternative can replicate."},
+    {title:"It enables experiences and communications that intermediaries cannot deliver",desc:"Only a direct relationship allows us to accompany the guest before, during and after the stay in a way that builds genuine loyalty."}
+  ]},
+  {id:"owner_priority",category:"Owner & franchise",
+   text:"How important is it that the commercial strategy explicitly demonstrates value to owners and franchise partners?",
+   sub:"This determines how prominently owner economics should feature in the strategy.",
+   type:"single",options:[
+    {title:"It is central — owners are a primary audience for much of what we do",desc:"Owner confidence and retention is a primary commercial objective, not a secondary one."},
+    {title:"It is important but follows naturally from strong guest performance",desc:"If we serve guests well, owner returns follow — we don't need to optimise for owners separately."},
+    {title:"It matters in specific conversations but is not a strategic driver",desc:"Owner metrics are a reporting and relationship topic, not a core strategic input."},
+    {title:"It is less relevant to my role and focus area",desc:"I work primarily on the guest and commercial side — owner relationships are managed elsewhere."}
+  ]},
+  {id:"personalisation_belief",category:"Guest strategy",
+   text:"What do you believe personalisation should primarily deliver for Landal in the next 2–3 years?",
+   sub:"Personalisation means different things to different people — this question surfaces your conviction.",
+   type:"single",options:[
+    {title:"Higher conversion by showing guests what is most relevant to them",desc:"The main win is in the booking funnel — the right offer at the right moment drives more bookings."},
+    {title:"Targeted offers and promotions that convert at the right moment",desc:"Personalisation is most powerful when it delivers a specific, timely offer — a discount, a package or an incentive — to the guest most likely to respond to it."},
+    {title:"Better guest experience that drives loyalty and repeat visits",desc:"Personalisation is primarily a retention tool — guests who feel known and valued come back more."},
+    {title:"Smarter demand signals that improve forecasting and pricing",desc:"What guests search for and engage with tells us about demand — that insight feeds yield decisions."}
+  ]},
+  {id:"automation_belief",category:"Technology & capability",
+   text:"Where do you believe technology and AI can create the most value in our commercial operations?",
+   sub:"Think about where the gap between what we could do and what we currently do is largest.",
+   type:"single",options:[
+    {title:"Executing pricing and inventory decisions faster and at greater scale",desc:"The biggest opportunity is speed and volume — machines doing in real-time what humans do too slowly."},
+    {title:"Surfacing better insights so commercial teams make smarter decisions",desc:"The biggest opportunity is decision quality — AI as an advisor that improves human judgment."},
+    {title:"Personalising the guest journey in ways that are impossible to do manually",desc:"The biggest opportunity is in relevance — connecting the right offer to the right guest at scale."},
+    {title:"Stabilising and connecting our data and system landscape",desc:"The biggest opportunity is in the foundation — reliable, integrated data that everything else depends on."}
+  ]},
+  {id:"indirect_channel_belief",category:"Distribution",
+   text:"What is the right role for indirect channels (OTAs, partners) in Landal's commercial model?",
+   sub:"Our current indirect share is around 5% of revenue. This question is about where you think it should go.",
+   type:"single",options:[
+    {title:"Tightly controlled — protect direct share at all costs",desc:"The guest relationship depends on direct bookings; indirect should be minimised and closely managed."},
+    {title:"Selective acquisition tool for new guests in underserved markets",desc:"Use indirect deliberately to reach guests we can't reach directly, then convert them to direct loyalty."},
+    {title:"A growth lever we should invest more in",desc:"We're underusing indirect — more channel diversity would increase reach and reduce concentration risk."},
+    {title:"Largely irrelevant given our direct share — focus elsewhere",desc:"At 93%+ direct, distribution is a solved problem. The commercial energy should go elsewhere."}
+  ]},
+  {id:"offer_toolkit_belief",category:"Offer & revenue mix",
+   text:"Beyond the base rental price, what role should our offer toolkit play — ancillaries, packages and promotional pricing?",
+   sub:"This covers everything we can add to or do with an offer beyond the accommodation price itself.",
+   type:"single",options:[
+    {title:"A major commercial lever — invest now to build a structured offer capability",desc:"Targeted promotions, packages and ancillaries should be a significant and growing part of our revenue and conversion strategy."},
+    {title:"A conversion and demand-shaping tool, once the right infrastructure is in place",desc:"The potential is real but we need better data, segmentation and tooling before we can use it well — it's a 2–3 year build."},
+    {title:"A guest experience complement that adds value, not primarily a revenue driver",desc:"Ancillaries and packages complete the right break for the guest. Commercial value follows from that — it shouldn't be engineered separately."},
+    {title:"A lower priority given current fragmentation across parks and systems",desc:"Too many systems, too little data and too much franchise complexity make this a difficult lever to pull effectively today."}
+  ]},
+  {id:"top_priorities",category:"Priorities",
+   text:"Rank these commercial priorities for the next 2–3 years",
+   sub:"Drag to reorder — most important at the top.",
+   type:"rank",
+   items:[
+    "Improve pricing speed, accuracy and yield performance",
+    "Grow and diversify the guest base into new segments",
+    "Increase guest loyalty and repeat booking rate",
+    "Build a stable, integrated data and system foundation",
+    "Grow ancillary, package and promotional revenue",
+    "Strengthen direct channel performance and conversion",
+    "Deliver demonstrably superior owner returns"
+  ]},
+  {id:"strategic_tension",category:"Organisational priorities",
+   text:"When commercial ambitions compete with other organisational goals, what should take priority?",
+   sub:"This question is also relevant for the broader executive team — it surfaces real alignment gaps.",
+   type:"single",options:[
+    {title:"Protecting the quality of the guest experience, even when it limits short-term revenue",desc:"Experience quality is the foundation — we never trade it for a commercial gain, however tempting."},
+    {title:"Maintaining operational and IT stability, especially during transformation periods",desc:"Rushing commercial ambition at the cost of system or operational reliability creates more risk than it resolves."},
+    {title:"Investing in long-term growth over maximising near-term financial performance",desc:"Building the right guest base and capabilities now matters more than hitting this year's targets."},
+    {title:"Delivering the commercial results that fund everything else",desc:"Without strong commercial performance, we cannot invest in experience, technology or sustainable growth."}
+  ]},
+  {id:"biggest_risk",category:"Risk & resilience",
+   text:"What internal risk concerns you most — what hurts us most if we get it wrong or don't deliver?",
+   sub:"Focus on risks within Landal's control: where wrong choices or underdelivery would do lasting damage.",
+   type:"single",options:[
+    {title:"Falling behind on data, technology and system capability",desc:"If we don't close the gap on tooling and integration, we become structurally slower than the market — and harder to catch up with every year that passes."},
+    {title:"Failing to attract and retain the right guest segments",desc:"If we don't actively diversify, our natural guest base ages or shrinks — and repositioning is expensive and slow."},
+    {title:"Pricing that erodes trust with guests and owners",desc:"Inconsistent, opaque or aggressive pricing damages the guest's confidence in booking directly and undermines the owner's confidence in Landal as a commercial partner."},
+    {title:"Over-reliance on a single channel, segment or market",desc:"Concentration risk — if our core direct channel, primary segment or main market underperforms, we have no fallback and our resilience is structurally weak."}
+  ]}
+];
+
+let currentQ=0,answers={},userData={},dragSrc=null;
+
+function startQuestionnaire(){
+  userData.name=document.getElementById('user-name').value.trim()||'You';
+  userData.role=document.getElementById('user-role').value.trim()||'';
+  showScreen('screen-questions');renderQuestion(0);
+}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function renderQuestion(idx){
+  const q=questions[idx];
+  const pct=Math.round((idx/questions.length)*100);
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('q-pct').textContent=pct+'%';
+  document.getElementById('q-label').textContent='Question '+(idx+1)+' of '+questions.length;
+  document.getElementById('q-category').textContent=q.category;
+  document.getElementById('q-text').textContent=q.text;
+  const subEl=document.getElementById('q-sub');
+  subEl.textContent=q.sub;subEl.style.display=q.sub?'block':'none';
+  const body=document.getElementById('q-body');
+  if(q.type==='single')body.innerHTML=renderSingle(q);
+  else{body.innerHTML=renderRank(q);initDrag();}
+}
+function renderSingle(q){
+  const L=['A','B','C','D'],s=answers[q.id];
+  return'<div class="options">'+q.options.map((o,i)=>
+    `<button type="button" class="opt-btn${s===i?' selected':''}" onclick="selectOption('${q.id}',${i})">
+      <span class="opt-letter">${L[i]}</span>
+      <span class="opt-content"><span class="opt-title">${o.title}</span><br><span class="opt-desc">${o.desc}</span></span>
+      <span class="opt-check">✓</span>
+    </button>`).join('')+'</div>';
+}
+function renderRank(q){
+  const saved=answers[q.id]||q.items;
+  return'<p class="rank-hint">Drag to reorder — most important at the top</p><div class="rank-list" id="rank-list">'+
+    saved.map((item,i)=>`<div class="rank-item" draggable="true"><span class="rank-num">${i+1}</span><span class="drag-icon">⠿</span><span>${item}</span></div>`).join('')+'</div>';
+}
+function selectOption(qId,idx){
+  answers[qId]=idx;
+  document.querySelectorAll('.opt-btn').forEach((b,i)=>b.classList.toggle('selected',i===idx));
+}
+function initDrag(){
+  const list=document.getElementById('rank-list');if(!list)return;
+  list.querySelectorAll('.rank-item').forEach(item=>{
+    item.addEventListener('dragstart',()=>{dragSrc=item;item.classList.add('dragging')});
+    item.addEventListener('dragend',()=>{item.classList.remove('dragging');updateNums()});
+    item.addEventListener('dragover',e=>{e.preventDefault();item.classList.add('drag-over')});
+    item.addEventListener('dragleave',()=>item.classList.remove('drag-over'));
+    item.addEventListener('drop',e=>{
+      e.preventDefault();item.classList.remove('drag-over');
+      if(dragSrc!==item){
+        const items=[...list.querySelectorAll('.rank-item')];
+        const si=items.indexOf(dragSrc),ti=items.indexOf(item);
+        if(si<ti)list.insertBefore(dragSrc,item.nextSibling);else list.insertBefore(dragSrc,item);
+        updateNums();
+      }
+    });
+  });
+}
+function updateNums(){document.querySelectorAll('#rank-list .rank-item').forEach((el,i)=>el.querySelector('.rank-num').textContent=i+1)}
+function saveRank(){
+  if(questions[currentQ].type!=='rank')return;
+  answers[questions[currentQ].id]=[...document.querySelectorAll('#rank-list .rank-item')].map(el=>el.querySelector('span:last-child').textContent);
+}
+function nextQuestion(){saveRank();currentQ++;if(currentQ>=questions.length)generateStrategy();else renderQuestion(currentQ)}
+function skipQuestion(){currentQ++;if(currentQ>=questions.length)generateStrategy();else renderQuestion(currentQ)}
+function generateStrategy(){
+  showScreen('screen-loading');
+  const msgs=['Analysing your priorities...','Defining your north star...','Building demand pillars...','Building yield pillars...','Adding goals and actions...','Finalising...'];
+  let mi=0;
+  const iv=setInterval(()=>{if(mi<msgs.length)document.getElementById('loading-msg').textContent=msgs[mi++];},900);
+  setTimeout(()=>{clearInterval(iv);renderResult(buildStrategy());showScreen('screen-result');},5500);
+}
+function v(key,def){return answers[key]!==undefined?answers[key]:def}
+
+function buildStrategy(additions){
+  const ns=v('north_star_anchor',1),demGap=v('biggest_demand_gap',0),yldGap=v('yield_biggest_gap',3);
+  const guestWhy=v('guest_relationship_why',0),ownerP=v('owner_priority',1),personalB=v('personalisation_belief',0);
+  const autoB=v('automation_belief',0),indirectB=v('indirect_channel_belief',1);
+  const offerB=v('offer_toolkit_belief',1);
+  const tension=v('strategic_tension',0),risk=v('biggest_risk',0);
+  return{
+    northStar:buildNorthStar(ns),
+    demand:buildDemand(demGap,guestWhy,indirectB,personalB,offerB),
+    yield:buildYield(yldGap,autoB,offerB,risk,ownerP),
+    actions:buildActions(yldGap,autoB,offerB,demGap,risk,indirectB),
+    additions:additions||''
+  };
+}
+
+function buildNorthStar(ns){
+  return[
+    {statement:"Voor elke gast de juiste break — built on knowing our guests better than any competitor",rationale:"Our north star is guest knowledge as competitive advantage. When we understand who our guests are, what they need and when they are ready to book, every commercial decision — pricing, offer, channel, timing — becomes more precise. For guests this means relevance. For owners it means utilisation and returns that no intermediary can match."},
+    {statement:"Voor elke gast de juiste break — the right park, the right accommodation, for the right person",rationale:"Our north star is the quality of the connection between guest and experience. Commercial success flows from consistently connecting each guest to the break that genuinely fits their need. This drives conversion, loyalty and owner utilisation — not as separate objectives, but as natural outcomes of getting the connection right every time."},
+    {statement:"Voor elke gast de juiste break — delivering returns to owners that no alternative can replicate",rationale:"Our north star is owner value as strategic differentiation. By building an unrivalled direct guest base for nature-based breaks, Landal creates the demand, utilisation and pricing power that owners cannot generate independently. Guest relevance is the mechanism; superior owner economics is the outcome."},
+    {statement:"Voor elke gast de juiste break — priced with precision that reflects its true demand and value",rationale:"Our north star is pricing excellence as competitive advantage. The ability to price every experience accurately — based on demand, segment, context and timing — creates value for guests, owners and Landal simultaneously. Precise pricing is not just a yield tool; it is a trust signal that reinforces both the guest and owner relationship."}
+  ][ns]||{statement:"Voor elke gast de juiste break",rationale:""};
+}
+
+function buildDemand(demGap,guestWhy,indirectB,personalB,offerB){
+  const promoInDemand=personalB===1||offerB===0;
+  return[
+    {number:"Demand pillar 1",title:"Brand & audience development",
+     desc:demGap===0?"Landal must be actively considered by guests who are not yet in our natural reach — before price or availability becomes the deciding factor.":"Ensure the brand consistently communicates what makes a Landal break distinctive, creating pull that reduces cost of acquisition over time.",
+     goals:[
+       "Be the first-choice brand for nature-based holiday breaks across all priority guest segments",
+       "Grow the share of new guests from segments currently underrepresented in our booking mix",
+       indirectB===1?"Use indirect channels as a deliberate first-touch tool in markets where our direct brand presence is insufficient":"Protect direct brand dominance as the primary engine of new guest acquisition"
+     ],
+     actions:[
+       "Define and prioritise guest segments by lifetime value, need-state fit and current penetration level",
+       "Build segment-specific brand and demand creation plans for the top 2–3 underpenetrated segments",
+       indirectB===1?"Design indirect acquisition workflow: track new guests via OTAs and trigger direct conversion sequence post-stay":"Set annual direct share targets and fund the demand investment needed to maintain them",
+       "Establish brand measurement by segment — not just overall awareness or NPS"
+     ],
+     kpis:["Brand consideration by target segment","New guest acquisition rate by segment","Cost of acquisition trend","Segment mix shift YoY"]},
+    {number:"Demand pillar 2",title:"Direct channel performance & conversion",
+     desc:demGap===1?"The primary demand challenge is conversion — guests reach us but don't book, or book less than they could. Every funnel and UX decision should be evaluated against this gap.":"Ensure guests who reach Landal find and book the right experience without friction — and that we capture that relationship directly.",
+     goals:[
+       "Convert a higher share of guests who reach our direct channels into confirmed bookings",
+       "Ensure offer presentation is experience-led and contextually relevant, not inventory-led",
+       promoInDemand?"Use targeted promotional offers as a conversion accelerator — the right incentive at the right moment for the guest most likely to respond":"Make repeat booking effortless — a returning guest should never have to start from scratch"
+     ],
+     actions:[
+       "Instrument the booking funnel with per-stage conversion tracking by device, segment and journey type",
+       "Test and implement experience-cluster-based offer presentation — surface parks by need-state, not just availability",
+       promoInDemand?"Build promotional offer logic for the booking funnel: define which segments receive which offer type at which point in the journey, and at what discount depth":"Introduce recognition and pre-fill mechanics for returning guests across web and app",
+       "Set direct channel share as a board-level KPI and report it alongside revenue"
+     ],
+     kpis:["Funnel conversion rate by stage","Direct channel share","Booking abandonment rate",promoInDemand?"Promotional offer conversion rate vs. non-promotional":"Repeat booking rate via direct"]},
+    {number:"Demand pillar 3",title:"CRM & loyalty",
+     desc:guestWhy===0?"A rich, connected picture of each guest's preferences, history and behaviour makes every subsequent commercial decision more precise — across pricing, offer and channel.":guestWhy===1?"A loyal direct guest base is a structural cost advantage — reducing dependency on paid acquisition and giving us more commercial freedom over time.":guestWhy===2?"The accumulated guest relationship is Landal's most distinctive commercial asset — the one thing owners and franchise partners cannot build or access independently.":"Only a direct guest relationship allows us to accompany the guest before, during and after the stay — creating loyalty that no intermediary can replicate.",
+     goals:[
+       "Know every guest — their need-state, booking history, ancillary behaviour and channel preference",
+       "Increase repeat booking rate by making the second and third stay easier and more relevant than the first",
+       personalB===1?"Use targeted offers and promotions as a CRM tool — early-bird incentives, loyalty rewards and lapsed-guest reactivation each require distinct offer logic":personalB===0?"Drive higher conversion through contextual, guest-specific offer presentation in the booking funnel":"Build a post-stay journey that anticipates the next relevant break and brings guests back directly"
+     ],
+     actions:[
+       "Build unified guest profiles connecting booking history, ancillary signals and channel behaviour across all touchpoints",
+       "Design loyalty mechanics that incentivise app adoption and direct re-booking over OTA return",
+       personalB===1?"Define promotional offer logic per CRM lifecycle stage: acquisition offers differ from loyalty rewards, which differ from reactivation incentives":guestWhy===2?"Develop owner-facing materials presenting the Landal guest base as a strategic asset no alternative provides":"Implement structured first-to-repeat conversion programme with dedicated triggers at 30, 90 and 180 days post-stay",
+       "Define and track guest lifetime value as the primary long-term CRM metric"
+     ],
+     kpis:["Repeat booking rate","App adoption rate","First-to-repeat conversion rate","Guest lifetime value trend"]}
+  ];
+}
+
+function buildYield(yldGap,autoB,offerB,risk,ownerP){
+  return[
+    {number:"Yield pillar 1",title:"Reliable foundation",
+     desc:risk===0||autoB===3?"The most significant internal risk to our yield ambition is the gap between where we want to operate and where our systems and data currently allow us to. Closing this gap is the prerequisite for everything else.":"Pricing, data and systems must perform consistently — automated, scalable and always available. Without this, optimisation cannot run at scale and human capacity is permanently absorbed by operational firefighting.",
+     goals:[
+       "Operate without pricing execution failures, data gaps or system-driven manual workarounds",
+       "Give commercial teams reliable, consolidated data they can act on without first having to clean or reconcile it",
+       "Free human capacity from operational maintenance so it can focus on strategy, owner management and exception handling"
+     ],
+     actions:[
+       "Deliver PMS stabilisation programme — resolve instability and fragmentation as the foundation of all yield capability",
+       "Define and close the highest-priority commercial data quality gaps across parks and systems",
+       "Build integration layer between PMS, pricing tooling and commercial reporting — eliminate manual data extraction",
+       "Implement commercial monitoring and alerting: anomalies in pricing execution, data quality or booking pace trigger immediate notification"
+     ],
+     kpis:["PMS uptime and incident rate","Data completeness score","Manual intervention rate in pricing","Time-to-detect on commercial data issues"]},
+    {number:"Yield pillar 2",title:"Intelligent optimisation",
+     desc:yldGap===0?"Prices must respond to demand signals in near real-time — reducing the lag between market movement and our pricing reaction.":yldGap===1?"Routine pricing decisions must be automated so that commercial capacity is directed at strategy, owner conversations and exception management — not operational maintenance.":yldGap===2?"Forecast accuracy is the foundation of confident pricing. Without reliable demand prediction, we default to conservative or reactive decisions that leave revenue on the table.":"Pricing must be logically consistent across comparable experiences. Guests lose confidence in booking directly and owners lose trust in Landal as a commercial partner when similar properties are priced arbitrarily differently.",
+     goals:[
+       "Price every experience at the level that reflects its demand, competitive position and segment context",
+       "Forecast demand accurately enough to hold rate confidently, manage inventory proactively and plan ahead",
+       yldGap===3?"Ensure pricing is logically consistent across accommodation size, stay duration and luxury tier — no guest should ever find a contradictory price":"Reduce time-to-action on demand signals to a level that is commercially competitive"
+     ],
+     actions:[
+       "Define experience clusters across the portfolio — group parks and accommodations by guest need-state and establish cluster-level pricing governance",
+       yldGap===2?"Build forecast models incorporating demand drivers beyond historical pace: events, weather, macroeconomics, cancellation behaviour":"Implement pricing integrity ruleset: define logical constraints that all pricing decisions must respect, regardless of optimisation tool",
+       autoB===0?"Deploy automation for routine pricing decisions — define the ruleset, test on subset of inventory and expand progressively":autoB===1?"Implement AI-assisted pricing recommendations with transparent, auditable decisioning — humans remain in control of strategy and exceptions":"Extend automation coverage with clear governance: define what is automated, what escalates and how overrides are logged",
+       "Establish RevPAR and forecast accuracy as primary yield KPIs — reported at cluster level, not just portfolio average"
+     ],
+     kpis:["Forecast accuracy (MAPE by cluster)","RevPAR trend","Automation rate (% decisions without manual intervention)","Time-to-action on demand signals"]},
+    {number:"Yield pillar 3",title:"Relevant value delivery",
+     desc:offerB===0?"Connecting the right offer to the right guest at the right price — using targeted promotions, packages and ancillaries as active levers for conversion, demand shaping and revenue per booking.":offerB===2?"Connecting the right offer to the right guest at the right price — where ancillary and package signals reveal need-states that sharpen both the experience match and the pricing decision.":"Connecting the right offer to the right guest at the right price — ensuring that pricing, promotional logic and offer content are consistently aligned to what each segment values.",
+     goals:[
+       "Every guest receives an offer that reflects their need-state, not just their dates and destination",
+       "Segment-level pricing — not individual-level price discrimination — becomes the standard approach across the portfolio",
+       offerB===0?"Use targeted promotions and packages as demand management tools — stimulating bookings in low-demand windows without undermining rate integrity in high-demand periods":"Use promotional and ancillary signals as demand intelligence — what guests respond to reveals which experience cluster fits them and how much they are willing to pay at segment level"
+     ],
+     actions:[
+       "Map ancillary and package signals to experience clusters — define which offer combinations indicate which guest need-state",
+       "Build segmented pricing model: define 3–5 guest segments and create pricing and offer logic per segment per cluster",
+       "Build promotional governance framework: define demand thresholds that trigger promotional activity, maximum discount depth by segment and inventory type, and blackout conditions that protect peak-period rate integrity",
+       ownerP===0?"Develop owner-facing yield reporting: translate RevPAR and utilisation data into owner return metrics benchmarked against market alternatives":"Connect promotional execution to CRM segmentation — every promotional offer reaches a defined guest segment through a defined channel, never as a broad public discount",
+       "Design and test personalised offer experience in booking funnel — surface the experience cluster and offer content that best matches observed guest behaviour"
+     ],
+     kpis:["Revenue per guest (rental + ancillary + packages)","Promotional offer redemption rate by segment","Discount depth vs. incremental occupancy ratio",ownerP===0?"Owner revenue index vs. market alternative":"Offer relevance score (CTR and conversion on personalised offers)"]}
+  ];
+}
+
+function buildActions(yldGap,autoB,offerB,demGap,risk,indirectB){
+  return[
+    {title:"Immediate priorities — 0 to 6 months",items:[
+      "Launch PMS stability audit: document all system gaps and instability sources affecting pricing and data quality",
+      "Define experience clusters: group parks and accommodations by guest need-state; establish cluster governance",
+      "Instrument the booking funnel: implement per-stage conversion tracking by device and segment",
+      demGap===0?"Run segment mapping exercise: score existing and target segments by LTV, fit and current penetration":"Build first-to-repeat conversion programme with structured post-stay triggers",
+      "Establish commercial KPI dashboard: RevPAR, direct share, repeat rate, forecast accuracy — visible weekly to commercial leadership"
+    ]},
+    {title:"Medium-term build — 6 to 18 months",items:[
+      risk===0||autoB===3?"Deliver PMS stabilisation and build consolidated commercial data layer across all parks":"Automate routine pricing decisions for high-volume, low-complexity inventory using rules-based execution",
+      autoB===0?"Design and implement pricing automation ruleset with governance framework":"Deploy AI-assisted forecasting with extended demand driver ingestion: events, weather, macroeconomic signals, cancellation patterns",
+      offerB===0?"Build promotional governance framework and connect offer execution to CRM segmentation — define depth limits, trigger thresholds and blackout conditions per segment and inventory type":"Define ancillary and package data consolidation roadmap: identify which parks have actionable offer data and build toward a unified offer capability",
+      indirectB===1?"Build indirect acquisition and CRM handoff workflow — track OTA new guests and trigger structured direct conversion sequence":"Invest in direct channel personalisation: implement segment and cluster-aware offer presentation in booking funnel",
+      "Launch unified guest profile programme: connect booking history, ancillary signals and behavioural data into a single guest record"
+    ]},
+    {title:"Tools & capabilities to evaluate",items:[
+      "Revenue management system (RMS) with cluster-level forecasting and automated pricing rule execution",
+      "Customer data platform (CDP) to unify guest profiles across booking, CRM and on-park touchpoints",
+      "Pricing intelligence tool for competitive monitoring and market position tracking across experience clusters",
+      "CRM and marketing automation platform with lifecycle segmentation, promotional offer logic and direct re-conversion workflows",
+      autoB<=1?"AI-assisted demand forecasting and recommendation engine with transparent decisioning and audit trail":"Automated pricing execution engine with full audit trail, exception management and stakeholder reporting"
+    ]}
+  ];
+}
+
+function renderResult(strategy){
+  document.getElementById('result-person').textContent=userData.name+(userData.role?' · '+userData.role:'');
+  document.getElementById('result-date').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  let html='';
+  html+=`<div class="north-star-block"><div class="ns-eyebrow">North star</div><div class="ns-statement">${strategy.northStar.statement}</div><div class="ns-rationale">${strategy.northStar.rationale}</div></div>`;
+  if(strategy.additions){html+=`<div style="background:var(--green-pale);border:1px solid var(--green-muted);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.5rem"><div style="font-size:11px;font-weight:500;color:var(--green-light);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px">Additional context</div><div style="font-size:13px;color:var(--text-mid);line-height:1.6">${strategy.additions}</div></div>`;}
+  html+='<div class="strategy-section"><div class="section-heading">Demand strategy</div>';
+  strategy.demand.forEach(p=>{html+=pillarCard(p)});html+='</div>';
+  html+='<div class="strategy-section"><div class="section-heading">Yield strategy</div>';
+  strategy.yield.forEach(p=>{html+=pillarCard(p)});html+='</div>';
+  html+='<div class="strategy-section"><div class="section-heading">Draft actions & tools</div>';
+  strategy.actions.forEach(a=>{html+=`<div class="action-card"><div class="action-card-title">${a.title}</div><ul class="action-list">${a.items.map(i=>`<li>${i}</li>`).join('')}</ul></div>`;});
+  html+='</div>';
+  document.getElementById('result-body').innerHTML=html;
+  renderAnswerGrid();
+}
+
+function pillarCard(p){
+  return`<div class="pillar-card"><div class="pillar-number">${p.number}</div><div class="pillar-title">${p.title}</div><div class="pillar-desc">${p.desc}</div><div class="pillar-sub-label">Goals</div><ul class="pillar-goals">${p.goals.map(g=>`<li>${g}</li>`).join('')}</ul><div class="pillar-divider"></div><div class="pillar-sub-label">Key actions</div><ul class="pillar-actions">${p.actions.map(a=>`<li>${a}</li>`).join('')}</ul><div class="kpi-row">${p.kpis.map(k=>`<span class="kpi-chip">${k}</span>`).join('')}</div></div>`;
+}
+
+function renderAnswerGrid(){
+  const grid=document.getElementById('answers-grid');
+  let html='';
+  questions.forEach(q=>{
+    const ans=answers[q.id];
+    let ansText='—';
+    if(q.type==='single'&&ans!==undefined)ansText=q.options[ans].title;
+    else if(q.type==='rank'&&Array.isArray(ans))ansText=ans.slice(0,3).join(' › ')+'…';
+    else if(q.type==='rank')ansText=q.items.slice(0,3).join(' › ')+'…';
+    html+=`<div class="answer-chip"><div class="answer-chip-cat">${q.category}</div><div class="answer-chip-q">${q.text.length>60?q.text.slice(0,60)+'…':q.text}</div><div class="answer-chip-a">${ansText}</div></div>`;
+  });
+  grid.innerHTML=html;
+}
+
+function exportAnswers(){
+  const out={name:userData.name,role:userData.role,date:new Date().toISOString().slice(0,10),answers:{}};
+  questions.forEach(q=>{
+    const ans=answers[q.id];
+    if(q.type==='single'&&ans!==undefined)out.answers[q.id]={idx:ans,text:q.options[ans].title};
+    else if(q.type==='rank')out.answers[q.id]={ranked:Array.isArray(ans)?ans:q.items};
+  });
+  const str=JSON.stringify(out,null,2);
+  const blob=new Blob([str],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='landal-strategy-answers-'+userData.name.toLowerCase().replace(/\s+/g,'-')+'.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+
+function refreshAndPrint(){
+  const additions=document.getElementById('user-additions').value.trim();
+  renderResult(buildStrategy(additions));
+  document.getElementById('additions-note').classList.add('visible');
+  setTimeout(()=>window.print(),300);
+}
+
+function openCompare(){document.getElementById('compare-modal').classList.add('open')}
+function closeCompare(){document.getElementById('compare-modal').classList.remove('open');document.getElementById('compare-result').innerHTML='';document.getElementById('compare-input').value=''}
+
+function runCompare(){
+  const raw=document.getElementById('compare-input').value.trim();
+  if(!raw){document.getElementById('compare-result').innerHTML='<p style="color:var(--text-muted);font-size:13px">Please paste an exported answer file.</p>';return;}
+  let other;
+  try{other=JSON.parse(raw);}catch(e){document.getElementById('compare-result').innerHTML='<p style="color:var(--text-muted);font-size:13px">Could not read the file — make sure you paste the full exported JSON.</p>';return;}
+  const myA=answers,theirA=other.answers||{};
+  let html=`<div style="font-size:13px;color:var(--text-muted);margin-bottom:1rem">Comparing <strong style="color:var(--text)">${userData.name}</strong> vs <strong style="color:var(--text)">${other.name||'colleague'}</strong></div>`;
+  html+='<table class="compare-table"><thead><tr><th>Topic</th><th>'+userData.name+'</th><th>'+(other.name||'Colleague')+'</th></tr></thead><tbody>';
+  let diffCount=0;
+  questions.filter(q=>q.type==='single').forEach(q=>{
+    const myIdx=myA[q.id]!==undefined?myA[q.id]:null;
+    const theirIdx=theirA[q.id]!==undefined?theirA[q.id].idx:null;
+    const myText=myIdx!==null?q.options[myIdx].title:'—';
+    const theirText=theirIdx!==null?q.options[theirIdx].title:'—';
+    const diff=myText!==theirText;
+    if(diff)diffCount++;
+    html+=`<tr class="${diff?'diff':''}"><td>${q.category}</td><td>${myText}${diff?'':' <span class="badge-match">aligned</span>'}</td><td>${theirText}${diff?' <span class="badge-diff">differs</span>':''}</td></tr>`;
+  });
+  html+='</tbody></table>';
+  const total=questions.filter(q=>q.type==='single').length;
+  html+=`<div style="margin-top:1rem;font-size:13px;color:var(--text-muted)">${diffCount} of ${total} answers differ. ${diffCount===0?'Full alignment — you are seeing the commercial strategy the same way.':diffCount<=3?'Mostly aligned with a few important differences worth discussing in detail.':'Significant divergence — these gaps are worth a structured conversation before aligning on strategy.'}</div>`;
+  document.getElementById('compare-result').innerHTML=html;
+}
+
+function restartTool(){
+  currentQ=0;answers={};userData={};
+  document.getElementById('user-name').value='';
+  document.getElementById('user-role').value='';
+  document.getElementById('additions-note').classList.remove('visible');
+  showScreen('screen-welcome');
+}
+</script>
+</body>
+</html>
